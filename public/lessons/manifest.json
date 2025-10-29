@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "profile-service",
+    "title": "Building a Production-Grade Profile Service (Spring MVC)",
+    "tags": [
+      "Backend Engineering",
+      "Spring",
+      "Microservices",
+      "Observability"
+    ],
+    "summary": "Design and ship a resilient customer profile service with production-grade instrumentation, testing, and rollout strategies.",
+    "duration": "6-8 hours",
+    "path": "public/lessons/profile-service-lesson.json"
+  }
+]
