@@ -1,0 +1,70 @@
+.bouncing-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounce 1200ms ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.7;
+  }
+
+  50% {
+    transform: translateY(-40%) scale(0.9);
+    opacity: 1;
+  }
+}
+
+.video-shell {
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: grid;
+  grid-template-rows: auto 1fr auto auto;
+  padding: 3rem;
+  gap: 1.5rem;
+}
+
+.video-shell__header h1 {
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+.video-shell__header p {
+  margin: 0;
+  color: rgba(226, 232, 240, 0.75);
+}
+
+.video-shell__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
+
+.video-shell__footer {
+  margin: 0;
+  font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, monospace;
+  color: rgba(226, 232, 240, 0.7);
+}
+
+.video-shell__progress {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.video-shell__progress-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #38bdf8, #818cf8);
+  transform-origin: left;
+}
