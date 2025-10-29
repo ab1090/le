@@ -78,7 +78,7 @@
       if (!lessonSlug) {
         setStatus('No lesson selected. Return to the catalog to choose a lesson.', 'error');
       } else {
-        const manifestUrl = '/lessons/manifest.json';
+        const manifestUrl = 'public/lessons/manifest.json';
         setStatus('Loading lesson…', 'loading');
 
         fetch(manifestUrl)
