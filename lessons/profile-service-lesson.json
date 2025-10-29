@@ -1,0 +1,114 @@
+{
+  "title": "Building a Production-Grade Profile Service (Spring MVC)",
+  "audience": "Senior backend engineers responsible for customer data platforms.",
+  "summary": "Architect, implement, and harden a Spring MVC profile service that can withstand real-world production demands.",
+  "duration": "6-8 hours",
+  "prerequisites": [
+    {
+      "title": "Professional Java Experience",
+      "description": "Comfort with Java 17, dependency injection, and building REST APIs in Spring."
+    },
+    {
+      "title": "Operational Awareness",
+      "description": "Familiarity with distributed tracing, metrics, and structured logging in cloud environments."
+    },
+    {
+      "title": "Database Fundamentals",
+      "description": "Understanding of relational data modeling, indexing strategies, and transactional boundaries."
+    }
+  ],
+  "learningModel": {
+    "framing": "Start by mapping how customer profile data flows across your current platform and identify pain points that this lesson will address.",
+    "coreActivity": "Implement the service incrementally, pairing infrastructure-as-code setup with Spring MVC development tasks to expose resilient endpoints.",
+    "feedback": "Instrument automated tests, synthetic checks, and distributed tracing spans to verify quality at each iteration and capture stakeholder feedback.",
+    "transfer": "Apply the same deployment hardening and observability playbook to adjacent customer data services in your organization."
+  },
+  "competencyPillars": [
+    {
+      "name": "Architecture & Domain Modeling",
+      "description": "Translate customer identity requirements into a robust domain model that cleanly separates write, read, and search responsibilities.",
+      "outcomes": [
+        "Document service boundaries, upstream dependencies, and API contracts.",
+        "Design persistence schemas that accommodate eventual search and analytics use cases.",
+        "Capture domain events to keep downstream projections eventually consistent."
+      ]
+    },
+    {
+      "name": "Spring MVC Implementation",
+      "description": "Build a layered Spring MVC application that exposes secure CRUD operations, optimistic locking, and request validation.",
+      "outcomes": [
+        "Scaffold controllers, services, and repositories with clear separation of concerns.",
+        "Implement DTO validation and sanitize untrusted input at the edge.",
+        "Introduce integration tests with Testcontainers to cover real database interactions."
+      ]
+    },
+    {
+      "name": "Resilience & Observability",
+      "description": "Harden the service for production by adding circuit breakers, backpressure, and first-class telemetry.",
+      "outcomes": [
+        "Apply resilience4j patterns to protect downstream dependencies.",
+        "Emit OpenTelemetry spans, metrics, and structured logs for critical interactions.",
+        "Define golden signals and dashboards to support on-call readiness."
+      ]
+    },
+    {
+      "name": "Delivery Workflow",
+      "description": "Plan how the service moves from commit to production with confidence, including automated quality gates and phased rollout.",
+      "outcomes": [
+        "Configure continuous delivery pipelines with smoke, integration, and contract tests.",
+        "Implement feature flags and shadow traffic to derisk deployment.",
+        "Run load testing and chaos experiments before enabling general availability."
+      ]
+    },
+    {
+      "name": "Stakeholder Enablement",
+      "description": "Ensure partner teams can integrate the profile service and support their own downstream use cases.",
+      "outcomes": [
+        "Publish API docs, onboarding guides, and SLA expectations.",
+        "Co-design synthetic events and sandbox data for client teams.",
+        "Establish escalation paths, alert routing, and response playbooks."
+      ]
+    }
+  ],
+  "integrationProject": {
+    "overview": "Build a greenfield customer profile service that ingests profile updates from upstream systems, exposes a REST API, and synchronizes to downstream search indices.",
+    "iterations": [
+      {
+        "title": "Iteration 1: Baseline Service",
+        "objective": "Stand up the Spring MVC service, connect to PostgreSQL, and expose create/read endpoints for customer profiles.",
+        "tasks": [
+          "Model the profile aggregate and persistence schema.",
+          "Generate REST controllers with DTO validation and error handling.",
+          "Add integration tests that exercise the HTTP surface and persistence layer."
+        ]
+      },
+      {
+        "title": "Iteration 2: Observability & Resilience",
+        "objective": "Instrument the service with tracing, metrics, and resilience policies to handle downstream failures gracefully.",
+        "tasks": [
+          "Add OpenTelemetry instrumentation and export traces to your preferred collector.",
+          "Introduce circuit breakers and retries for downstream search index updates.",
+          "Capture SLOs for latency, availability, and freshness, and surface them on dashboards."
+        ]
+      },
+      {
+        "title": "Iteration 3: Delivery Hardening",
+        "objective": "Productionize the deployment workflow with staged rollouts, feature flags, and on-call playbooks.",
+        "tasks": [
+          "Automate database migrations and smoke tests in CI/CD.",
+          "Configure feature flags or traffic shadowing for incremental rollout.",
+          "Draft on-call runbooks, alert routing, and incident response templates."
+        ]
+      }
+    ]
+  },
+  "reflection": {
+    "description": "Use these prompts during a retro or personal reflection session once the project is complete.",
+    "prompts": [
+      "Where did instrumentation or dashboards surface an unknown risk early?",
+      "Which delivery workflow guardrails delivered the most confidence?",
+      "How will you adapt this playbook for adjacent services in your ecosystem?",
+      "What conversations are needed with partner teams to maximize adoption?"
+    ]
+  }
+}
