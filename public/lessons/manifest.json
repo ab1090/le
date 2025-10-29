@@ -10,6 +10,6 @@
     ],
     "summary": "Design and ship a resilient customer profile service with production-grade instrumentation, testing, and rollout strategies.",
     "duration": "6-8 hours",
-    "path": "/lessons/profile-service-lesson.json"
+    "path": "public/lessons/profile-service-lesson.json"
   }
 ]
