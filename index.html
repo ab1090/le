@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Competency Lesson Library</title>
+    <link rel="stylesheet" href="lesson.css" />
+  </head>
+  <body class="catalog">
+    <header class="site-header">
+      <div class="container">
+        <h1>Competency Lesson Library</h1>
+        <p class="lede">
+          Explore competency-based lessons authored in JSON and rendered directly
+          in the browser. Choose a tag to discover lessons tailored to your
+          learning goals.
+        </p>
+      </div>
+    </header>
+
+    <main class="container">
+      <div id="status" role="status" class="status status--loading">
+        Loading lessons…
+      </div>
+      <div id="catalog" class="catalog-grid" hidden></div>
+    </main>
+
+    <template id="tag-section-template">
+      <section class="tag-group">
+        <header class="tag-group__header">
+          <h2 class="tag-group__title"></h2>
+        </header>
+        <div class="tag-group__grid"></div>
+      </section>
+    </template>
+
+    <template id="lesson-card-template">
+      <article class="lesson-card">
+        <header class="lesson-card__header">
+          <h3 class="lesson-card__title">
+            <a class="lesson-card__link"></a>
+          </h3>
+          <span class="lesson-card__duration" aria-label="Duration"></span>
+        </header>
+        <p class="lesson-card__summary"></p>
+        <footer class="lesson-card__footer"></footer>
+      </article>
+    </template>
+
+    <script>
+      const statusEl = document.getElementById('status');
+      const catalogEl = document.getElementById('catalog');
+      const tagSectionTemplate = document.getElementById('tag-section-template');
+      const lessonCardTemplate = document.getElementById('lesson-card-template');
+
+      const setStatus = (message, modifier = '') => {
+        statusEl.textContent = message;
+        statusEl.className = modifier ? `status status--${modifier}` : 'status';
+        statusEl.hidden = false;
+      };
+
+      const hideStatus = () => {
+        statusEl.hidden = true;
+      };
+
+      const renderTags = (manifest) => {
+        if (!Array.isArray(manifest) || manifest.length === 0) {
+          setStatus('No lessons available yet. Please check back soon.', 'empty');
+          return;
+        }
+
+        const groups = new Map();
+        manifest.forEach((entry) => {
+          const tags = Array.isArray(entry.tags) && entry.tags.length > 0 ? entry.tags : ['Other'];
+          tags.forEach((tag) => {
+            const normalizedTag = tag.trim() || 'Other';
+            if (!groups.has(normalizedTag)) {
+              groups.set(normalizedTag, []);
+            }
+            groups.get(normalizedTag).push(entry);
+          });
+        });
+
+        const sortedTags = Array.from(groups.keys()).sort((a, b) => a.localeCompare(b));
+        const fragment = document.createDocumentFragment();
+
+        sortedTags.forEach((tag) => {
+          const sectionNode = tagSectionTemplate.content.cloneNode(true);
+          const sectionEl = sectionNode.querySelector('.tag-group');
+          sectionEl.querySelector('.tag-group__title').textContent = tag;
+          const gridEl = sectionEl.querySelector('.tag-group__grid');
+
+          const lessons = groups.get(tag).sort((a, b) => a.title.localeCompare(b.title));
+          lessons.forEach((lesson) => {
+            const cardNode = lessonCardTemplate.content.cloneNode(true);
+            const cardEl = cardNode.querySelector('.lesson-card');
+            const linkEl = cardEl.querySelector('.lesson-card__link');
+            const summaryEl = cardEl.querySelector('.lesson-card__summary');
+            const durationEl = cardEl.querySelector('.lesson-card__duration');
+            const footerEl = cardEl.querySelector('.lesson-card__footer');
+
+            const url = new URL('lesson.html', window.location);
+            url.searchParams.set('lesson', lesson.slug);
+
+            linkEl.textContent = lesson.title;
+            linkEl.href = url.toString();
+
+            summaryEl.textContent = lesson.summary || 'Dive into this competency-based lesson to learn more.';
+            durationEl.textContent = lesson.duration || 'Self-paced';
+
+            footerEl.innerHTML = '';
+            if (Array.isArray(lesson.tags)) {
+              lesson.tags
+                .filter((tagLabel) => tagLabel && tagLabel !== tag)
+                .slice(0, 3)
+                .forEach((tagLabel) => {
+                  const badge = document.createElement('span');
+                  badge.className = 'badge';
+                  badge.textContent = tagLabel;
+                  footerEl.appendChild(badge);
+                });
+            }
+
+            gridEl.appendChild(cardNode);
+          });
+
+          fragment.appendChild(sectionNode);
+        });
+
+        catalogEl.innerHTML = '';
+        catalogEl.appendChild(fragment);
+        catalogEl.hidden = false;
+        hideStatus();
+      };
+
+      const manifestUrl = '/lessons/manifest.json';
+
+      fetch(manifestUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Unable to load manifest: ${response.statusText}`);
+          }
+          return response.json();
+        })
+        .then(renderTags)
+        .catch((error) => {
+          console.error(error);
+          setStatus('We were unable to load the lesson catalog. Please try again later.', 'error');
+        });
+    </script>
+  </body>
+</html>

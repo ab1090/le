@@ -1,0 +1,269 @@
+{
+  "title": "Building a Production-Grade Profile Service (Spring MVC)",
+  "audience": "Senior backend engineers responsible for customer data platforms.",
+  "summary": "Design the system context, data contracts, and Spring MVC implementation for a resilient customer profile service, then harden it for production readiness.",
+  "duration": "8 hours",
+  "prerequisites": [
+    {
+      "title": "Professional Java Experience",
+      "description": "Comfort with Java 17, dependency injection, and building REST APIs in Spring."
+    },
+    {
+      "title": "Operational Awareness",
+      "description": "Familiarity with distributed tracing, metrics, and structured logging in cloud environments."
+    },
+    {
+      "title": "Database Fundamentals",
+      "description": "Understanding of relational data modeling, indexing strategies, and transactional boundaries."
+    }
+  ],
+  "learningModel": {
+    "framing": "Start with the architecture: map which systems publish profile mutations today, which consumers depend on the data, and the failure modes that force rework or incidents.",
+    "coreActivity": "Iteratively design and implement the service, alternating between architecture checkpoints (context, container, component views) and hands-on Spring MVC development with tests.",
+    "feedback": "Use architecture decision records, pairing reviews, and telemetry-driven tests to validate each iteration before promoting it to the next environment.",
+    "transfer": "Apply the same architecture-first approach and delivery guardrails to other customer data surfaces or shared platform APIs."
+  },
+  "lessonPlan": {
+    "overview": "Follow five facilitated blocks that move from architecture framing to deployment readiness. Each block ends with a tangible artifact or demo.",
+    "segments": [
+      {
+        "title": "Architecture Context Briefing",
+        "duration": "60 min",
+        "focus": "Align on business capabilities, stakeholders, and the bounded context for the profile service.",
+        "activities": [
+          "Review stakeholder map and current-state integration points.",
+          "Draft a system-context diagram capturing upstream and downstream systems.",
+          "Identify cross-functional quality attributes (latency, compliance, resiliency)."
+        ],
+        "deliverables": [
+          "System-context diagram annotated with actors and protocols.",
+          "Architecture decision record (ADR) summarizing scope and constraints."
+        ]
+      },
+      {
+        "title": "Domain Modeling & Contract Design",
+        "duration": "90 min",
+        "focus": "Translate business capabilities into aggregates, contracts, and data flows.",
+        "activities": [
+          "Model the profile aggregate, read models, and event contracts in a whiteboard session.",
+          "Define REST and async contracts (JSON schema, Avro, or Protobuf) for create/update/search operations.",
+          "Design migration strategy for legacy profile identifiers and partial updates."
+        ],
+        "deliverables": [
+          "Domain glossary and ERD for canonical profile storage.",
+          "Contract catalog describing REST endpoints and message topics."
+        ]
+      },
+      {
+        "title": "Service Skeleton & Observability",
+        "duration": "120 min",
+        "focus": "Stand up the Spring MVC skeleton, persistence layer, and baseline telemetry.",
+        "activities": [
+          "Generate controller, service, and repository layers using Spring Initializr and company standards.",
+          "Implement DTO validation, optimistic locking, and persistence mappings to PostgreSQL.",
+          "Instrument OpenTelemetry traces, metrics, and structured logs for critical paths."
+        ],
+        "deliverables": [
+          "Passing integration tests (Testcontainers) for CRUD flows.",
+          "Dashboard mock-up demonstrating golden signals for the service."
+        ]
+      },
+      {
+        "title": "Resilience & Data Synchronization",
+        "duration": "90 min",
+        "focus": "Protect dependencies and synchronize data to secondary stores without data loss.",
+        "activities": [
+          "Introduce resilience4j circuit breakers, retries, and rate limiting for downstream search indexes.",
+          "Model outbox patterns or change data capture for profile replication.",
+          "Run chaos drills that simulate downstream outages and verify recovery procedures."
+        ],
+        "deliverables": [
+          "Sequence diagram describing failure handling and recovery flows.",
+          "Synthetic check plan verifying replication lag and error budgets."
+        ]
+      },
+      {
+        "title": "Production Readiness Review",
+        "duration": "60 min",
+        "focus": "Harden deployment workflows, governance artifacts, and support playbooks.",
+        "activities": [
+          "Align CI/CD stages with automated smoke, contract, and load tests.",
+          "Establish rollout strategies (feature flags, shadow traffic, canaries).",
+          "Document on-call handoff, alert routing, and runbook expectations."
+        ],
+        "deliverables": [
+          "Release checklist covering migration, rollback, and communication steps.",
+          "Support playbook outlining escalation paths and observability dashboards."
+        ]
+      }
+    ]
+  },
+  "competencyPillars": [
+    {
+      "name": "Architecture & Domain Modeling",
+      "description": "Translate customer identity requirements into a robust domain model that cleanly separates write, read, and search responsibilities.",
+      "outcomes": [
+        "Document service boundaries, upstream dependencies, and API contracts.",
+        "Design persistence schemas that accommodate eventual search and analytics use cases.",
+        "Capture domain events to keep downstream projections eventually consistent."
+      ],
+      "examples": [
+        "Decompose the monolithic profile database into command and query models with separate lifecycle policies.",
+        "Map how profile merges propagate to marketing automation and analytics consumers without double counting."
+      ]
+    },
+    {
+      "name": "Spring MVC Implementation",
+      "description": "Build a layered Spring MVC application that exposes secure CRUD operations, optimistic locking, and request validation.",
+      "outcomes": [
+        "Scaffold controllers, services, and repositories with clear separation of concerns.",
+        "Implement DTO validation and sanitize untrusted input at the edge.",
+        "Introduce integration tests with Testcontainers to cover real database interactions."
+      ],
+      "examples": [
+        "Demonstrate how controller advice normalizes error payloads for partner teams.",
+        "Showcase optimistic locking preventing lost updates when customer data specialists edit the same record."
+      ]
+    },
+    {
+      "name": "Resilience & Observability",
+      "description": "Harden the service for production by adding circuit breakers, backpressure, and first-class telemetry.",
+      "outcomes": [
+        "Apply resilience4j patterns to protect downstream dependencies.",
+        "Emit OpenTelemetry spans, metrics, and structured logs for critical interactions.",
+        "Define golden signals and dashboards to support on-call readiness."
+      ],
+      "examples": [
+        "Use synthetic profile mutations to validate SLO burn alerts before launch.",
+        "Capture correlation IDs across Kafka consumers, the profile service, and the search index updater."
+      ]
+    },
+    {
+      "name": "Delivery Workflow",
+      "description": "Plan how the service moves from commit to production with confidence, including automated quality gates and phased rollout.",
+      "outcomes": [
+        "Configure continuous delivery pipelines with smoke, integration, and contract tests.",
+        "Implement feature flags and shadow traffic to derisk deployment.",
+        "Run load testing and chaos experiments before enabling general availability."
+      ],
+      "examples": [
+        "Stage blue/green deployments with automated rollback when replication lag exceeds thresholds.",
+        "Shadow 5% of identity updates through the new service before cutting traffic."
+      ]
+    },
+    {
+      "name": "Stakeholder Enablement",
+      "description": "Ensure partner teams can integrate the profile service and support their own downstream use cases.",
+      "outcomes": [
+        "Publish API docs, onboarding guides, and SLA expectations.",
+        "Co-design synthetic events and sandbox data for client teams.",
+        "Establish escalation paths, alert routing, and response playbooks."
+      ],
+      "examples": [
+        "Create onboarding runbooks for experimentation teams consuming identity signals.",
+        "Provide customer support with scripted diagnostics for common profile sync issues."
+      ]
+    }
+  ],
+  "architectureGuide": {
+    "context": "Anchor your implementation in three complementary architecture views, capturing both runtime interactions and operational trade-offs.",
+    "views": [
+      {
+        "name": "System Context",
+        "focus": "Show how the profile service mediates between identity providers, consent management, and downstream personalization engines.",
+        "decisions": [
+          "Expose REST APIs for synchronous customer updates while emitting domain events for asynchronous consumers.",
+          "Treat the profile service as the system of record for mutable profile attributes while search and analytics act as projections."
+        ],
+        "tradeOffs": [
+          "Balancing synchronous writes for consistency with async replication latency for analytics.",
+          "Managing regulatory obligations (GDPR/CCPA) across multiple downstream storage systems."
+        ]
+      },
+      {
+        "name": "Container View",
+        "focus": "Detail the deployable units: Spring MVC service, PostgreSQL cluster, Kafka topics, search indexer, and observability stack.",
+        "decisions": [
+          "Deploy the API behind an ingress controller with WAF and mutual TLS for partner integrations.",
+          "Use a managed PostgreSQL cluster with read replicas to support high-volume read workloads.",
+          "Adopt Kafka for change propagation so additional projections can subscribe without coupling."
+        ],
+        "tradeOffs": [
+          "Higher operational overhead for Kafka offset management versus simplified webhook integrations.",
+          "Running read replicas introduces replication lag that the API must communicate to clients."
+        ]
+      },
+      {
+        "name": "Component View",
+        "focus": "Break the service into API, application, domain, and infrastructure layers plus supporting modules.",
+        "decisions": [
+          "Separate command handlers from query resolvers to support divergent read/write scaling paths.",
+          "Implement an outbox pattern within the persistence layer to guarantee event delivery to Kafka.",
+          "Encapsulate observability concerns in cross-cutting interceptors to avoid duplicating boilerplate."
+        ],
+        "tradeOffs": [
+          "Higher upfront complexity for CQRS compared to a single repository layer.",
+          "Outbox pattern adds storage overhead but prevents dual-write inconsistencies."
+        ]
+      }
+    ],
+    "referenceImplementations": [
+      {
+        "label": "Spring PetClinic Microservices",
+        "url": "https://github.com/spring-petclinic/spring-petclinic-microservices",
+        "summary": "Demonstrates production-grade Spring Boot services with service discovery, circuit breakers, and centralized config."
+      },
+      {
+        "label": "Event Sourcing & CQRS with Spring",
+        "url": "https://github.com/AxonFramework/Axon-trader",
+        "summary": "Showcases outbox and event-driven patterns that map to the profile replication requirements."
+      },
+      {
+        "label": "OpenTelemetry Java Instrumentation",
+        "url": "https://github.com/open-telemetry/opentelemetry-java-instrumentation",
+        "summary": "Provides reference instrumentation, exporters, and deployment guidance for consistent telemetry." 
+      }
+    ]
+  },
+  "integrationProject": {
+    "overview": "Build a greenfield customer profile service that ingests profile updates from upstream systems, exposes a REST API, and synchronizes to downstream search indices.",
+    "iterations": [
+      {
+        "title": "Iteration 1: Domain & Service Skeleton",
+        "objective": "Deliver the architecture artifacts and a functional Spring MVC skeleton ready for CRUD workloads.",
+        "tasks": [
+          "Finalize system-context, container, and component views plus supporting ADRs.",
+          "Implement core create/read/update flows with DTO validation and optimistic locking backed by PostgreSQL.",
+          "Ship integration tests that exercise the HTTP surface, domain layer, and persistence using Testcontainers."
+        ]
+      },
+      {
+        "title": "Iteration 2: Observability & Resilience",
+        "objective": "Instrument the service and protect dependencies so failures are transparent and recoverable.",
+        "tasks": [
+          "Add OpenTelemetry traces, metrics, and logs; publish dashboards for latency, throughput, and error budgets.",
+          "Introduce resilience4j policies (circuit breakers, retries, bulkheads) for downstream search index updates.",
+          "Document failure scenarios and attach runbooks to each alert with clear mitigation steps."
+        ]
+      },
+      {
+        "title": "Iteration 3: Data Synchronization & Delivery",
+        "objective": "Guarantee downstream consistency and production-readiness for launch.",
+        "tasks": [
+          "Implement an outbox or CDC pipeline to publish profile change events to Kafka and feed the search indexer.",
+          "Configure CI/CD with automated schema migrations, smoke tests, and staged rollouts (shadow traffic + canary).",
+          "Run load and chaos tests, capture findings, and update the release checklist accordingly."
+        ]
+      }
+    ]
+  },
+  "reflection": {
+    "description": "Use these prompts during a retro or personal reflection session once the project is complete.",
+    "prompts": [
+      "Which architecture decision delivered the most leverage for downstream teams?",
+      "How did observability insights change the rollout or support plan?",
+      "Where did resilience patterns absorb real failure scenarios during testing?",
+      "What should be templatized for other services adopting similar customer data flows?"
+    ]
+  }
+}

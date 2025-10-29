@@ -1,0 +1,15 @@
+[
+  {
+    "slug": "profile-service",
+    "title": "Building a Production-Grade Profile Service (Spring MVC)",
+    "tags": [
+      "Backend Engineering",
+      "Spring",
+      "Microservices",
+      "Observability"
+    ],
+    "summary": "Architect, implement, and harden a Spring MVC profile service with explicit system views, lesson plan, and production guardrails.",
+    "duration": "8 hours",
+    "path": "/lessons/profile-service-lesson.json"
+  }
+]
